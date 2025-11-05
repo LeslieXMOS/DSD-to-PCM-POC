@@ -29,8 +29,6 @@ void dsd_to_pcm(chanend_t c_dsd_in, chanend_t c_pcm_out) {
     ring_buffer1 = s_chan_in_word(c_pcm_out);
     ring_buffer_size = s_chan_in_word(c_pcm_out);
 
-    printf("%x %x %x\n", ring_buffer0, ring_buffer1, ring_buffer_size);
-
     pdm_pcm_init(&pdm0);
     pdm_pcm_init(&pdm1);
 

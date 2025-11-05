@@ -1,24 +1,5 @@
-// #include <platform.h>
-// #include "dsd_to_pcm_task.h"
-
-// extern "C" {
-//     int test(void);
-// }
-
-// int main(void) {
-//     streaming chan a;
-//     streaming chan b;
-//     par {
-//         on tile[1]: dsd_to_pcm(a, b);
-//     }
-// }
-
-
 #include <platform.h>
 #include "i2s_task.h"
-// #include "upsample.h"
-// #include "downsample.h"
-// #include "dummy.h"
 #include "stdio.h"
 #include "xk_audio_316_mc_ab/board.h"
 #include "i2c.h"
@@ -119,13 +100,9 @@ int main(void)
     par {
         on tile[0]: xk_audio_316_mc_ab_i2c_master(&i_i2c);
         on tile[0]: {
-            printf("a\n");
             board_setup();
-            printf("b\n");
             AudioHwInit(i_i2c);
-            printf("c\n");
             AudioHwConfig(i_i2c, I2S_SAMPLE_FREQUENCY,MCLK_FREQUENCY,0,I2S_DATA_BITS,I2S_DATA_BITS);
-            printf("don\n");
             I2CWriteRegs(i_i2c, (0x4A), 2, (0x70), 0x77);  // Sets ADCs into powerdown.
         };
         on tile[1]: dsd_to_pcm(c_dsd_in, c_pcm_out);
