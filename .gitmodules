@@ -1,3 +1,24 @@
 [submodule "usb_to_dsd/sw_usb_audio"]
 	path = usb_to_dsd/sw_usb_audio
 	url = https://github.com/LeslieXMOS/sw_usb_audio
+[submodule "sandbox/lib_board_support"]
+	path = sandbox/lib_board_support
+	url = git@github.com:xmos/lib_board_support
+[submodule "sandbox/lib_i2c"]
+	path = sandbox/lib_i2c
+	url = git@github.com:xmos/lib_i2c
+[submodule "sandbox/lib_i2s"]
+	path = sandbox/lib_i2s
+	url = git@github.com:xmos/lib_i2s
+[submodule "sandbox/lib_logging"]
+	path = sandbox/lib_logging
+	url = git@github.com:xmos/lib_logging
+[submodule "sandbox/lib_pdm"]
+	path = sandbox/lib_pdm
+	url = git@github.com:xmos/lib_pdm
+[submodule "sandbox/lib_sw_pll"]
+	path = sandbox/lib_sw_pll
+	url = git@github.com:xmos/lib_sw_pll
+[submodule "sandbox/lib_xassert"]
+	path = sandbox/lib_xassert
+	url = git@github.com:xmos/lib_xassert
