@@ -1,0 +1,3 @@
+[submodule "usb_to_dsd/sw_usb_audio"]
+	path = usb_to_dsd/sw_usb_audio
+	url = https://github.com/LeslieXMOS/sw_usb_audio
