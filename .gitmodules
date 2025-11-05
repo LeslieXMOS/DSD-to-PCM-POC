@@ -22,3 +22,42 @@
 [submodule "sandbox/lib_xassert"]
 	path = sandbox/lib_xassert
 	url = git@github.com:xmos/lib_xassert
+[submodule "usb_to_dsd/lib_adat"]
+	path = usb_to_dsd/lib_adat
+	url = git@github.com:xmos/lib_adat
+[submodule "usb_to_dsd/lib_board_support"]
+	path = usb_to_dsd/lib_board_support
+	url = git@github.com:xmos/lib_board_support
+[submodule "usb_to_dsd/lib_i2c"]
+	path = usb_to_dsd/lib_i2c
+	url = git@github.com:xmos/lib_i2c
+[submodule "usb_to_dsd/lib_i2s"]
+	path = usb_to_dsd/lib_i2s
+	url = git@github.com:xmos/lib_i2s
+[submodule "usb_to_dsd/lib_locks"]
+	path = usb_to_dsd/lib_locks
+	url = git@github.com:xmos/lib_locks
+[submodule "usb_to_dsd/lib_logging"]
+	path = usb_to_dsd/lib_logging
+	url = git@github.com:xmos/lib_logging
+[submodule "usb_to_dsd/lib_mic_array"]
+	path = usb_to_dsd/lib_mic_array
+	url = git@github.com:xmos/lib_mic_array
+[submodule "usb_to_dsd/lib_spdif"]
+	path = usb_to_dsd/lib_spdif
+	url = git@github.com:xmos/lib_spdif
+[submodule "usb_to_dsd/lib_sw_pll"]
+	path = usb_to_dsd/lib_sw_pll
+	url = git@github.com:xmos/lib_sw_pll
+[submodule "usb_to_dsd/lib_xassert"]
+	path = usb_to_dsd/lib_xassert
+	url = git@github.com:xmos/lib_xassert
+[submodule "usb_to_dsd/lib_xcore_math"]
+	path = usb_to_dsd/lib_xcore_math
+	url = git@github.com:xmos/lib_xcore_math
+[submodule "usb_to_dsd/lib_xua"]
+	path = usb_to_dsd/lib_xua
+	url = git@github.com:xmos/lib_xua
+[submodule "usb_to_dsd/lib_xud"]
+	path = usb_to_dsd/lib_xud
+	url = git@github.com:xmos/lib_xud
