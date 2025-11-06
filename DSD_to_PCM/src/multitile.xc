@@ -4,12 +4,24 @@
 #include "xk_audio_316_mc_ab/board.h"
 #include "i2c.h"
 #include "dsd_to_pcm_task.h"
+#include "dsd_task.h"
 
+#if defined(DSD_IN_MODE) && DSD_IN_MODE == 0    // DSD interface
+// DSD slave resources
+on tile[1]: in buffered port:32 p_dsd_slave_din[2] = {PORT_I2S_DAC1, PORT_I2S_DAC3};
+on tile[1]: in port p_dsd_slave_bclk = PORT_I2S_DAC2;
+on tile[1]: clock dsd_slave_clkblk = XS1_CLKBLK_1;
+
+#elif defined(DSD_IN_MODE) && DSD_IN_MODE == 1  // DOP I2S interface
 // I2S slave resources
 on tile[1]: in buffered port:32 p_i2s_slave_din[1] = {PORT_I2S_DAC3};
 on tile[1]: in port p_i2s_slave_bclk = PORT_I2S_DAC2;
 on tile[1]: in buffered port:32 p_i2s_slave_lrclk = PORT_I2S_DAC1;
 on tile[1]: clock i2s_slave_bclk = XS1_CLKBLK_1;
+
+#else
+#error "unsupport DSD in mode"
+#endif
 
 // I2S master resources
 on tile[1]: out buffered port:32 p_i2s_master_dout[1] = {PORT_I2S_DAC0};
@@ -106,7 +118,11 @@ int main(void)
             I2CWriteRegs(i_i2c, (0x4A), 2, (0x70), 0x77);  // Sets ADCs into powerdown.
         };
         on tile[1]: dsd_to_pcm(c_dsd_in, c_pcm_out);
+#if DSD_IN_MODE == 0
+        on tile[1]: dsd_slave_task(c_dsd_in, p_dsd_slave_din, 2, p_dsd_slave_bclk, dsd_slave_clkblk);
+#elif DSD_IN_MODE == 1
         on tile[1]: i2s_slave_task(c_dsd_in, NULL, 0, p_i2s_slave_din, 1, I2S_DATA_BITS, p_i2s_slave_bclk, p_i2s_slave_lrclk, i2s_slave_bclk);
+#endif
         on tile[1]: i2s_master_task(c_pcm_out, p_i2s_master_dout, 1, NULL, 0, I2S_DATA_BITS, p_i2s_master_bclk, p_i2s_master_lrclk, p_i2s_master_mclk, i2s_master_bclk);
     }
 

@@ -1,0 +1,11 @@
+[dumpfile] "C:/Work/dsd_to_pcm_demo/xscope.vcd"
+[savefile] "C:/Work/dsd_to_pcm_demo/xscope.gtkw"
+
+@22
+CH0[31:0]
+
+@22
+CH1[31:0]
+
+@22
+Missing_Data

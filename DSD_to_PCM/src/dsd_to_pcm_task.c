@@ -4,7 +4,10 @@
 #include <string.h>
 #include <xcore/port.h>
 #include <platform.h>
+#include <xscope.h>
 #include "pdm.h"
+
+#include "signal.h"
 
 inline void dop_to_dsd(int* dop, int* dsd) {
     // repack data
@@ -37,22 +40,32 @@ void dsd_to_pcm(chanend_t c_dsd_in, chanend_t c_pcm_out) {
         dsd_data_ch1 = s_chan_in_word(c_dsd_in);
 
         // CH0
-        dop_to_dsd(dsd_data_ch0, in_dsd);
+        if (DSD_IN_MODE == 0) {
+            memcpy(in_dsd, dsd_data_ch0, sizeof(in_dsd));
+        } else if (DSD_IN_MODE == 1) {
+            dop_to_dsd(dsd_data_ch0, in_dsd);
+        }
+        // printf("%x %x %x %x\n", in_dsd[0], in_dsd[1], in_dsd[2], in_dsd[3]);
         pdm_pcm_x1_64_i128_o2(out_pcm, in_dsd, &pdm0);
         ring_buffer0[ring_buffer_idx+0] = out_pcm[0];
         ring_buffer0[ring_buffer_idx+1] = out_pcm[1];
-        // CH1
-        dop_to_dsd(dsd_data_ch1, in_dsd);
-        pdm_pcm_x1_64_i128_o2(out_pcm, in_dsd, &pdm1);
-        ring_buffer1[ring_buffer_idx+0] = out_pcm[0];
-        ring_buffer1[ring_buffer_idx+1] = out_pcm[1];
+
+        // xscope_int(CH0, out_pcm[0]);
+        // xscope_int(CH0, out_pcm[1]);
+        // // CH1
+        // if (DSD_IN_MODE == 0) {
+        //     memcpy(in_dsd, dsd_data_ch1, sizeof(in_dsd));
+        // } else if (DSD_IN_MODE == 1) {
+        //     dop_to_dsd(dsd_data_ch1, in_dsd);
+        // }
+        // pdm_pcm_x1_64_i128_o2(out_pcm, in_dsd, &pdm1);
+        // ring_buffer1[ring_buffer_idx+0] = out_pcm[0];
+        // ring_buffer1[ring_buffer_idx+1] = out_pcm[1];
+
+        ring_buffer1[ring_buffer_idx+0] = 0;
+        ring_buffer1[ring_buffer_idx+1] = 0;
+
         ring_buffer_idx += 2;
         ring_buffer_idx %= ring_buffer_size;
-
-        // last_state = (++last_state)%2;
-        // port_out(p_test, last_state);
-        // delay_milliseconds(10);
-        // printf("%x %x %x %x\n", dsd_data_ch0[0], dsd_data_ch0[1], dsd_data_ch0[2], dsd_data_ch0[3]);
-        // printf("%x %x %x %x\n", dsd_data_ch1[0], dsd_data_ch1[1], dsd_data_ch1[2], dsd_data_ch1[3]);
     }
 }

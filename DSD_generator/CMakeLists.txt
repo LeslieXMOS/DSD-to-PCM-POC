@@ -1,0 +1,43 @@
+# cmake
+cmake_minimum_required(VERSION 3.21)
+include($ENV{XMOS_CMAKE_PATH}/xcommon.cmake)
+project(DSD_generator)
+
+# root
+set(XMOS_SANDBOX_DIR ${CMAKE_SOURCE_DIR}/../sandbox)
+
+# Dependencies
+set(APP_DEPENDENT_MODULES lib_sw_pll)
+
+set(APP_INCLUDES src)
+
+# target
+set(APP_HW_TARGET XK_VOICE_SQ66.xn)
+
+set(APP_COMPILER_FLAGS
+    -O3 -Wall -mcmodel=large -fxscope -g
+    -DDSD_CHANNEL_CNT=2
+)
+
+set(APP_COMPILER_FLAGS_DSD64_44100_1000
+    ${APP_COMPILER_FLAGS}
+    -DBASE=44100
+    -DMULT=64
+    -DTEST_FREQ=1000
+)
+
+set(APP_COMPILER_FLAGS_DSD256_44100_1000
+    ${APP_COMPILER_FLAGS}
+    -DBASE=44100
+    -DMULT=256
+    -DTEST_FREQ=1000
+)
+
+set(APP_COMPILER_FLAGS_DSD512_48000_1000
+    ${APP_COMPILER_FLAGS}
+    -DBASE=48000
+    -DMULT=512
+    -DTEST_FREQ=1000
+)
+
+XMOS_REGISTER_APP()

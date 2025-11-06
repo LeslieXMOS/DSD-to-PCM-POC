@@ -1,2 +1,4 @@
 <xSCOPEconfig ioMode="basic" enabled="true">
+  <Probe name="CH0" type="CONTINUOUS" datatype="INT" units="mV" enabled="true"/>
+  <Probe name="CH1" type="CONTINUOUS" datatype="INT" units="mV" enabled="true"/>
 </xSCOPEconfig>
