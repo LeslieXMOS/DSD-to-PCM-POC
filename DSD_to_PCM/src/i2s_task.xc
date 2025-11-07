@@ -7,6 +7,7 @@
 #include <platform.h>
 #include <xs1.h>
 #include "i2s.h"
+#include "i2s_task.h"
 
 #define SAMPLE_FREQUENCY (I2S_SAMPLE_FREQUENCY)
 #define MASTER_CLOCK_FREQUENCY (MCLK_FREQUENCY)
@@ -14,30 +15,47 @@
 #define RING_BUFF_SIZE (512)
 
 [[distributable]]
-void i2s_master_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s) {
-    int ring_buffer[2][RING_BUFF_SIZE];
+void i2s_master_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s[I2S_CHANNEL_CNT], chanend c_ctrl) {
+    // Cannot dynamic allocate base on num_in, set a large number instead
+    int ring_buffer[32][RING_BUFF_SIZE];
     int ring_buffer_send_idx = 0;
-    c_i2s <: (unsigned)ring_buffer[0];
-    c_i2s <: (unsigned)ring_buffer[1];
-    c_i2s <: RING_BUFF_SIZE;
+    int sample_rate = SAMPLE_FREQUENCY;
+    int mclk_freq = MASTER_CLOCK_FREQUENCY;
+    int control_token;
+    for (int i = 0; i < I2S_CHANNEL_CNT; ++i) {
+        c_i2s[i] <: (unsigned)ring_buffer[i];
+        c_i2s[i] <: RING_BUFF_SIZE;
+    }
     while (1) {
         select {
         case i_i2s.init(i2s_config_t &?i2s_config, tdm_config_t &?tdm_config):
-            i2s_config.mclk_bclk_ratio = (MASTER_CLOCK_FREQUENCY / (SAMPLE_FREQUENCY*2*DATA_BITS));
+            i2s_config.mclk_bclk_ratio = (mclk_freq / (sample_rate*2*DATA_BITS));
             i2s_config.mode = I2S_MODE_I2S;
             // Complete setup
             break;
         case i_i2s.restart_check() -> i2s_restart_t restart:
             // Inform the I2S slave whether it should restart or exit
-            restart = I2S_NO_RESTART;
+            control_token = inct(c_ctrl);
+            if (control_token == NEW_SAMPLE_FREQ) {
+                c_ctrl :> sample_rate;
+                c_ctrl :> mclk_freq;
+                restart = I2S_RESTART;
+            } else if (control_token == NO_SAMPLE_FREQ) {
+                restart = I2S_NO_RESTART;
+            } else {
+                restart = I2S_SHUTDOWN;
+            }
+            c_ctrl <: 1;
             break;
         case i_i2s.receive(size_t num_in, int32_t samples[num_in]):
             // Handle a received sample
             break;
         case i_i2s.send(size_t num_out, int32_t samples[num_out]):
             // Provide a sample to send
-            samples[0] = ring_buffer[0][ring_buffer_send_idx];
-            samples[1] = ring_buffer[1][ring_buffer_send_idx++];
+            for (int i = 0; i < num_out; ++i) {
+                samples[i] = ring_buffer[i][ring_buffer_send_idx];
+            }
+            ring_buffer_send_idx += 1;
             ring_buffer_send_idx %= RING_BUFF_SIZE;
             break;
         }
@@ -46,7 +64,7 @@ void i2s_master_application(server i2s_frame_callback_if i_i2s, streaming chanen
 
 
 int i2s_master_task(
-    streaming chanend c_i2s,
+    streaming chanend c_i2s[I2S_CHANNEL_CNT],
     out buffered port:32 (&?p_dout)[num_out],
     static const size_t num_out,
     in buffered port:32 (&?p_din)[num_in],
@@ -55,20 +73,22 @@ int i2s_master_task(
     out port p_bclk,
     out buffered port:32 p_lrclk,
     in port p_mclk,
-    clock bclk)
+    clock bclk,
+    chanend c_ctrl)
 {
     interface i2s_frame_callback_if i_i2s;
 
     par {
         i2s_frame_master(i_i2s, p_dout, num_out, p_din, num_in, num_data_bits, p_bclk, p_lrclk, p_mclk, bclk);
-        i2s_master_application(i_i2s, c_i2s);
+        i2s_master_application(i_i2s, c_i2s, c_ctrl);
     }
     return 0;
 }
 
 [[distributable]]
-void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s) {
-    int ring_buffer[2][RING_BUFF_SIZE];
+void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s[I2S_CHANNEL_CNT]) {
+    // Cannot dynamic allocate base on num_in, set a large number instead
+    int ring_buffer[32][RING_BUFF_SIZE];
     int ring_buffer_idx = 0;
     while (1) {
         select {
@@ -82,18 +102,22 @@ void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend
             break;
         case i_i2s.receive(size_t num_in, int32_t samples[num_in]):
             // Handle a received sample
-            ring_buffer[0][ring_buffer_idx] = samples[0];
-            ring_buffer[1][ring_buffer_idx++] = samples[1];
+            for (int i = 0; i < num_in; ++i) {
+                ring_buffer[i][ring_buffer_idx] = samples[i];
+            }
+            ring_buffer_idx += 1;
             if (ring_buffer_idx % 8 == 0) {
                 if (ring_buffer_idx == 0) {
-                    c_i2s <: (unsigned)(&(ring_buffer[0][RING_BUFF_SIZE-8]));
-                    c_i2s <: (unsigned)(&(ring_buffer[1][RING_BUFF_SIZE-8]));
+                    for (int i = 0; i < num_in; ++i) {
+                        c_i2s[i] <: (unsigned)(&(ring_buffer[i][RING_BUFF_SIZE-8]));
+                    }
                 } else {
-                    c_i2s <: (unsigned)(&(ring_buffer[0][ring_buffer_idx-8]));
-                    c_i2s <: (unsigned)(&(ring_buffer[1][ring_buffer_idx-8]));
+                    for (int i = 0; i < num_in; ++i) {
+                        c_i2s[i] <: (unsigned)(&(ring_buffer[i][ring_buffer_idx-8]));
+                    }
                 }
+                ring_buffer_idx %= RING_BUFF_SIZE;
             }
-            ring_buffer_idx %= RING_BUFF_SIZE;
             break;
         case i_i2s.send(size_t num_out, int32_t samples[num_out]):
             // Provide a sample to send
@@ -103,7 +127,7 @@ void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend
 }
 
 int i2s_slave_task(
-    streaming chanend c_i2s,
+    streaming chanend c_i2s[I2S_CHANNEL_CNT],
     out buffered port:32 (&?p_dout)[num_out],
     static const size_t num_out,
     in buffered port:32 (&?p_din)[num_in],

@@ -16,56 +16,32 @@ inline void dop_to_dsd(int* dop, int* dsd) {
     dsd[2] = ((dop[4] & 0x00FFFF00) << 8) | ((dop[5] & 0x00FFFF00) >> 8);
     dsd[3] = ((dop[6] & 0x00FFFF00) << 8) | ((dop[7] & 0x00FFFF00) >> 8);
 }
-// __attribute__((aligned(8)))
-void dsd_to_pcm(chanend_t c_dsd_in, chanend_t c_pcm_out) {
-    int* dsd_data_ch0;
-    int* dsd_data_ch1;
-    pdm_pcm_t pdm0, pdm1;
+
+void dsd_to_pcm_task(chanend_t c_dsd_in, chanend_t c_pcm_out) {
+    uint32_t* dsd_data;
+    pdm_pcm_t pdm;
     uint32_t in_dsd[4];
     int32_t out_pcm[2];
-    int* ring_buffer0;
-    int* ring_buffer1;
+    int* ring_buffer;
     size_t ring_buffer_size;
     int ring_buffer_idx = 16;
 
-    ring_buffer0 = s_chan_in_word(c_pcm_out);
-    ring_buffer1 = s_chan_in_word(c_pcm_out);
+    // Initialize i2s ring buffer
+    ring_buffer = s_chan_in_word(c_pcm_out);
     ring_buffer_size = s_chan_in_word(c_pcm_out);
 
-    pdm_pcm_init(&pdm0);
-    pdm_pcm_init(&pdm1);
+    pdm_pcm_init(&pdm);
 
     while (1) {
-        dsd_data_ch0 = s_chan_in_word(c_dsd_in);
-        dsd_data_ch1 = s_chan_in_word(c_dsd_in);
+        dsd_data = s_chan_in_word(c_dsd_in);
 
-        // CH0
-        if (DSD_IN_MODE == 0) {
-            memcpy(in_dsd, dsd_data_ch0, sizeof(in_dsd));
-        } else if (DSD_IN_MODE == 1) {
-            dop_to_dsd(dsd_data_ch0, in_dsd);
+        if (DSD_IN_MODE == 1) {
+            dop_to_dsd(dsd_data, in_dsd);
+            dsd_data = in_dsd;
         }
-        // printf("%x %x %x %x\n", in_dsd[0], in_dsd[1], in_dsd[2], in_dsd[3]);
-        pdm_pcm_x1_64_i128_o2(out_pcm, in_dsd, &pdm0);
-        ring_buffer0[ring_buffer_idx+0] = out_pcm[0];
-        ring_buffer0[ring_buffer_idx+1] = out_pcm[1];
-
-        // xscope_int(CH0, out_pcm[0]);
-        // xscope_int(CH0, out_pcm[1]);
-        // // CH1
-        // if (DSD_IN_MODE == 0) {
-        //     memcpy(in_dsd, dsd_data_ch1, sizeof(in_dsd));
-        // } else if (DSD_IN_MODE == 1) {
-        //     dop_to_dsd(dsd_data_ch1, in_dsd);
-        // }
-        // pdm_pcm_x1_64_i128_o2(out_pcm, in_dsd, &pdm1);
-        // ring_buffer1[ring_buffer_idx+0] = out_pcm[0];
-        // ring_buffer1[ring_buffer_idx+1] = out_pcm[1];
-
-        ring_buffer1[ring_buffer_idx+0] = 0;
-        ring_buffer1[ring_buffer_idx+1] = 0;
-
-        ring_buffer_idx += 2;
+        pdm_pcm_x1_64_i128_o2(out_pcm, dsd_data, &pdm);
+        ring_buffer[ring_buffer_idx++] = out_pcm[0];
+        ring_buffer[ring_buffer_idx++] = out_pcm[1];
         ring_buffer_idx %= ring_buffer_size;
     }
 }

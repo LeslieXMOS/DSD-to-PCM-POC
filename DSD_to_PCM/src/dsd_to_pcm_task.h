@@ -8,9 +8,9 @@ extern "C" {
 #endif
 
 #ifdef __XC__
-    void dsd_to_pcm(streaming chanend c_dsd_in, streaming chanend c_pcm_out);
+    void dsd_to_pcm_task(streaming chanend c_dsd_in, streaming chanend c_pcm_out);
 #else //__XC__
-    void dsd_to_pcm(chanend c_dsd_in, chanend c_pcm_out);
+    void dsd_to_pcm_task(chanend c_dsd_in, chanend c_pcm_out);
 #endif //__XC__
 
 #if defined(__cplusplus) || defined(__XC__)

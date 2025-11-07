@@ -11,6 +11,14 @@
 extern uint32_t signal_48000_512_1000[76800];
 #define sig signal_48000_512_1000
 
+#elif (BASE == 44100) && (MULT == 512) && (TEST_FREQ == 1000)
+extern uint32_t signal_44100_512_1000[70560];
+#define sig signal_44100_512_1000
+
+#elif (BASE == 48000) && (MULT == 256) && (TEST_FREQ == 1000)
+extern uint32_t signal_48000_256_1000[38400];
+#define sig signal_48000_256_1000
+
 #elif (BASE == 44100) && (MULT == 256) && (TEST_FREQ == 1000)
 extern uint32_t signal_44100_256_1000[35280];
 #define sig signal_44100_256_1000
@@ -18,6 +26,14 @@ extern uint32_t signal_44100_256_1000[35280];
 #elif (BASE == 48000) && (MULT == 128) && (TEST_FREQ == 1000)
 extern uint32_t signal_48000_128_1000[38400];
 #define sig signal_48000_128_1000
+
+#elif (BASE == 44100) && (MULT == 128) && (TEST_FREQ == 1000)
+extern uint32_t signal_44100_128_1000[35280];
+#define sig signal_44100_128_1000
+
+#elif (BASE == 48000) && (MULT == 64) && (TEST_FREQ == 1000)
+extern uint32_t signal_48000_64_1000[19200];
+#define sig signal_48000_64_1000
 
 #elif (BASE == 44100) && (MULT == 64) && (TEST_FREQ == 1000)
 extern uint32_t signal_44100_64_1000[17640];
@@ -27,6 +43,14 @@ extern uint32_t signal_44100_64_1000[17640];
 extern uint32_t signal_48000_512_2000[76800];
 #define sig signal_48000_512_2000
 
+#elif (BASE == 44100) && (MULT == 512) && (TEST_FREQ == 2000)
+extern uint32_t signal_44100_512_2000[70560];
+#define sig signal_44100_512_2000
+
+#elif (BASE == 48000) && (MULT == 256) && (TEST_FREQ == 2000)
+extern uint32_t signal_48000_256_2000[38400];
+#define sig signal_48000_256_2000
+
 #elif (BASE == 44100) && (MULT == 256) && (TEST_FREQ == 2000)
 extern uint32_t signal_44100_256_2000[35280];
 #define sig signal_44100_256_2000
@@ -35,29 +59,93 @@ extern uint32_t signal_44100_256_2000[35280];
 extern uint32_t signal_48000_128_2000[38400];
 #define sig signal_48000_128_2000
 
+#elif (BASE == 44100) && (MULT == 128) && (TEST_FREQ == 2000)
+extern uint32_t signal_44100_128_2000[35280];
+#define sig signal_44100_128_2000
+
+#elif (BASE == 48000) && (MULT == 64) && (TEST_FREQ == 2000)
+extern uint32_t signal_48000_64_2000[19200];
+#define sig signal_48000_64_2000
+
 #elif (BASE == 44100) && (MULT == 64) && (TEST_FREQ == 2000)
 extern uint32_t signal_44100_64_2000[17640];
 #define sig signal_44100_64_2000
 
-#elif (BASE == 48000) && (MULT == 512) && (TEST_FREQ == 3000)
-extern uint32_t signal_48000_512_3000[76800];
-#define sig signal_48000_512_3000
+#elif (BASE == 48000) && (MULT == 512) && (TEST_FREQ == 4000)
+extern uint32_t signal_48000_512_4000[76800];
+#define sig signal_48000_512_4000
 
-#elif (BASE == 44100) && (MULT == 256) && (TEST_FREQ == 3000)
-extern uint32_t signal_44100_256_3000[35280];
-#define sig signal_44100_256_3000
+#elif (BASE == 44100) && (MULT == 512) && (TEST_FREQ == 4000)
+extern uint32_t signal_44100_512_4000[70560];
+#define sig signal_44100_512_4000
 
-#elif (BASE == 48000) && (MULT == 128) && (TEST_FREQ == 3000)
-extern uint32_t signal_48000_128_3000[38400];
-#define sig signal_48000_128_3000
+#elif (BASE == 48000) && (MULT == 256) && (TEST_FREQ == 4000)
+extern uint32_t signal_48000_256_4000[38400];
+#define sig signal_48000_256_4000
 
-#elif (BASE == 44100) && (MULT == 64) && (TEST_FREQ == 3000)
-extern uint32_t signal_44100_64_3000[17640];
-#define sig signal_44100_64_3000
+#elif (BASE == 44100) && (MULT == 256) && (TEST_FREQ == 4000)
+extern uint32_t signal_44100_256_4000[35280];
+#define sig signal_44100_256_4000
+
+#elif (BASE == 48000) && (MULT == 128) && (TEST_FREQ == 4000)
+extern uint32_t signal_48000_128_4000[38400];
+#define sig signal_48000_128_4000
+
+#elif (BASE == 44100) && (MULT == 128) && (TEST_FREQ == 4000)
+extern uint32_t signal_44100_128_4000[35280];
+#define sig signal_44100_128_4000
+
+#elif (BASE == 48000) && (MULT == 64) && (TEST_FREQ == 4000)
+extern uint32_t signal_48000_64_4000[19200];
+#define sig signal_48000_64_4000
+
+#elif (BASE == 44100) && (MULT == 64) && (TEST_FREQ == 4000)
+extern uint32_t signal_44100_64_4000[17640];
+#define sig signal_44100_64_4000
+
+#elif (BASE == 48000) && (MULT == 512) && (TEST_FREQ == 8000)
+extern uint32_t signal_48000_512_8000[76800];
+#define sig signal_48000_512_8000
+
+#elif (BASE == 44100) && (MULT == 512) && (TEST_FREQ == 8000)
+extern uint32_t signal_44100_512_8000[70560];
+#define sig signal_44100_512_8000
+
+#elif (BASE == 48000) && (MULT == 256) && (TEST_FREQ == 8000)
+extern uint32_t signal_48000_256_8000[38400];
+#define sig signal_48000_256_8000
+
+#elif (BASE == 44100) && (MULT == 256) && (TEST_FREQ == 8000)
+extern uint32_t signal_44100_256_8000[35280];
+#define sig signal_44100_256_8000
+
+#elif (BASE == 48000) && (MULT == 128) && (TEST_FREQ == 8000)
+extern uint32_t signal_48000_128_8000[38400];
+#define sig signal_48000_128_8000
+
+#elif (BASE == 44100) && (MULT == 128) && (TEST_FREQ == 8000)
+extern uint32_t signal_44100_128_8000[35280];
+#define sig signal_44100_128_8000
+
+#elif (BASE == 48000) && (MULT == 64) && (TEST_FREQ == 8000)
+extern uint32_t signal_48000_64_8000[19200];
+#define sig signal_48000_64_8000
+
+#elif (BASE == 44100) && (MULT == 64) && (TEST_FREQ == 8000)
+extern uint32_t signal_44100_64_8000[17640];
+#define sig signal_44100_64_8000
 
 #elif (BASE == 48000) && (MULT == 512) && (TEST_FREQ == 19997)
 extern uint32_t signal_48000_512_19997[76800];
 #define sig signal_48000_512_19997
+
+#elif (BASE == 44100) && (MULT == 512) && (TEST_FREQ == 19997)
+extern uint32_t signal_44100_512_19997[70560];
+#define sig signal_44100_512_19997
+
+#elif (BASE == 48000) && (MULT == 256) && (TEST_FREQ == 19997)
+extern uint32_t signal_48000_256_19997[38400];
+#define sig signal_48000_256_19997
 
 #elif (BASE == 44100) && (MULT == 256) && (TEST_FREQ == 19997)
 extern uint32_t signal_44100_256_19997[35280];
@@ -66,6 +154,14 @@ extern uint32_t signal_44100_256_19997[35280];
 #elif (BASE == 48000) && (MULT == 128) && (TEST_FREQ == 19997)
 extern uint32_t signal_48000_128_19997[38400];
 #define sig signal_48000_128_19997
+
+#elif (BASE == 44100) && (MULT == 128) && (TEST_FREQ == 19997)
+extern uint32_t signal_44100_128_19997[35280];
+#define sig signal_44100_128_19997
+
+#elif (BASE == 48000) && (MULT == 64) && (TEST_FREQ == 19997)
+extern uint32_t signal_48000_64_19997[19200];
+#define sig signal_48000_64_19997
 
 #elif (BASE == 44100) && (MULT == 64) && (TEST_FREQ == 19997)
 extern uint32_t signal_44100_64_19997[17640];

@@ -10,18 +10,22 @@ extern "C" {
 #ifdef __XC__
     #pragma unsafe arrays
     void dsd_slave_task(
-        streaming chanend c_dsd,
+        streaming chanend c_dsd[num_in],
         in buffered port:32 (&?p_din)[num_in],
         size_t num_in,
         in port p_bclk,
-        clock clkblk);
+        clock clkblk,
+        chanend c_ctrl
+    );
 #else //__XC__
     void dsd_slave_task(
-        chanend_t c_dsd,
+        chanend_t* c_dsd,
         port_t *p_din,
         size_t num_in,
         port_t p_bclk,
-        xclock_t clkblk);
+        xclock_t clkblk,
+        chanend_t c_ctrl
+    );
 #endif //__XC__
 
 #if defined(__cplusplus) || defined(__XC__)
