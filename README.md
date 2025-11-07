@@ -10,6 +10,12 @@ This is a demo using lib_pdm to convert DSD signal to PCM signal
 * DSD_to_PCM: Firmware that runs on XK-AUDIO-316-MC-AB board to convert DSD signal to PCM signal and play with on-board DAC
 * usb_to_dsd: Firmware that runs on XK-AUDIO-316-MC-AB board to play computer host DSD audio through I2S interface with DOP format
 
+## Obtaining the Source Code
+
+```console
+git clone --recurse-submodules git@github.com:LeslieXMOS/DSD-to-PCM-POC.git
+```
+
 ## Test Setup
 
 1. Connect XK-VOICE-SQ66 and XK-AUDIO-316-MC-AB with following pin configuration
