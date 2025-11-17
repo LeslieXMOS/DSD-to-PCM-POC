@@ -40,6 +40,7 @@ void dsd_to_pcm_task(chanend_t c_dsd_in, chanend_t c_pcm_out) {
             dsd_data = in_dsd;
         }
         pdm_pcm_x1_64_i128_o2(out_pcm, dsd_data, &pdm);
+        xscope_int(CH0, out_pcm[0]);
         ring_buffer[ring_buffer_idx++] = out_pcm[0];
         ring_buffer[ring_buffer_idx++] = out_pcm[1];
         ring_buffer_idx %= ring_buffer_size;
