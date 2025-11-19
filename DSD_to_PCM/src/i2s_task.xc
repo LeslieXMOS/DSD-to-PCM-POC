@@ -14,6 +14,20 @@
 #define DATA_BITS (32)
 #define RING_BUFF_SIZE (512)
 
+// I2S format lookup table, {lower bound, upper bound, base, multiple}
+static unsigned format_lut[10][4] = {
+    {128, 132, 48000, 16},
+    {140, 144, 44100, 16},
+    {258, 262, 48000, 8},
+    {281, 285, 44100, 8},
+    {518, 522, 48000, 4},
+    {565, 569, 44100, 4},
+    {1040, 1044, 48000, 2},
+    {1132, 1136, 44100, 2},
+    {2081, 2085, 48000, 1},
+    {2265, 2269, 44100, 1},
+};
+
 [[distributable]]
 void i2s_master_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s[I2S_CHANNEL_CNT], chanend c_ctrl) {
     // Cannot dynamic allocate base on num_in, set a large number instead
@@ -86,10 +100,12 @@ int i2s_master_task(
 }
 
 [[distributable]]
-void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s[I2S_CHANNEL_CNT]) {
+void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend c_i2s[I2S_CHANNEL_CNT], chanend c_ctrl) {
     // Cannot dynamic allocate base on num_in, set a large number instead
     int ring_buffer[32][RING_BUFF_SIZE];
     int ring_buffer_idx = 0;
+    unsigned t0, t1;
+    unsigned format = 0;
     while (1) {
         select {
         case i_i2s.init(i2s_config_t &?i2s_config, tdm_config_t &?tdm_config):
@@ -99,6 +115,22 @@ void i2s_slave_application(server i2s_frame_callback_if i_i2s, streaming chanend
         case i_i2s.restart_check() -> i2s_restart_t restart:
             // Inform the I2S slave whether it should restart or exit
             restart = I2S_NO_RESTART;
+            // Format detection
+            asm volatile("gettime %0" : "=r"(t1));
+            unsigned delta = t1 - t0;
+            if (delta < format_lut[format][0] || delta > format_lut[format][1]) {
+                // Incorrect format
+                for (int i = 0; i < 8; ++i) {
+                    if (delta >= format_lut[i][0] && delta <= format_lut[i][1]) {
+                        format = i;
+                        c_ctrl :> int _;
+                        c_ctrl <: format_lut[format][2];
+                        c_ctrl <: format_lut[format][3];
+                        break;
+                    }
+                }
+            }
+            t0 = t1;
             break;
         case i_i2s.receive(size_t num_in, int32_t samples[num_in]):
             // Handle a received sample
@@ -135,13 +167,14 @@ int i2s_slave_task(
     static const size_t num_data_bits,
     in port p_bclk,
     in buffered port:32 p_lrclk,
-    clock bclk)
+    clock bclk,
+    chanend c_ctrl)
 {
     interface i2s_frame_callback_if i_i2s;
 
     par {
         i2s_frame_slave(i_i2s, p_dout, num_out, p_din, num_in, num_data_bits, p_bclk, p_lrclk, bclk);
-        i2s_slave_application(i_i2s, c_i2s);
+        i2s_slave_application(i_i2s, c_i2s, c_ctrl);
     }
     return 0;
 }

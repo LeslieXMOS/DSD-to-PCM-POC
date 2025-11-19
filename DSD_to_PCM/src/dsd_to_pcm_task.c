@@ -1,4 +1,3 @@
-#include "dsd_to_pcm_task.h"
 #include <xcore/chanend.h>
 #include <xcore/channel_streaming.h>
 #include <string.h>

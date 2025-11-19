@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define NEW_SAMPLE_FREQ         4
-#define NO_SAMPLE_FREQ          5
-
 #pragma unsafe arrays
 int i2s_master_task(
     streaming chanend c_i2s[I2S_CHANNEL_CNT],
@@ -34,4 +31,5 @@ int i2s_slave_task(
     static const size_t num_data_bits,
     in port p_bclk,
     in buffered port:32 p_lrclk,
-    clock bclk);
+    clock bclk,
+    chanend c_ctrl);

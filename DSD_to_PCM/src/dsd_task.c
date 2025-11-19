@@ -2,22 +2,21 @@
 #include <xcore/clock.h>
 #include <xcore/channel.h>
 #include <xcore/channel_streaming.h>
-#include "dsd_task.h"
 #include <xcore/select.h>
 #include <xcore/parallel.h>
 
 #define RING_BUFF_SIZE  (512)
 
 // DSD format lookup table, {lower bound, upper bound, base, multiple}
-unsigned format_lut[8][4] = {
-    {140, 144, 44100, 512},
+static unsigned format_lut[8][4] = {
     {128, 132, 48000, 512},
-    {281, 285, 44100, 256},
+    {140, 144, 44100, 512},
     {258, 262, 48000, 256},
-    {565, 569, 44100, 128},
+    {281, 285, 44100, 256},
     {518, 522, 48000, 128},
-    {1132, 1136, 44100, 64},
+    {565, 569, 44100, 128},
     {1040, 1044, 48000, 64},
+    {1132, 1136, 44100, 64},
 };
 
 void dsd_slave_task(
@@ -63,7 +62,7 @@ void dsd_slave_task(
             }
             // Format detection
             asm volatile("gettime %0" : "=r"(t1));
-            unsigned delta = t1-t0;
+            unsigned delta = t1 - t0;
             if (can_update_format) {
                 if (delta < format_lut[format][0] || delta > format_lut[format][1]) {
                     // Incorrect format
